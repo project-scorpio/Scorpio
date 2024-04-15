@@ -1,9 +1,4 @@
-﻿using System;
-using System.Threading.Tasks;
-
-using Scorpio.DependencyInjection;
-using Scorpio.Repositories;
-using Scorpio.Repositories.EntityFrameworkCore;
+﻿using System.Threading.Tasks;
 
 namespace Scorpio.Uow
 {
@@ -15,30 +10,5 @@ namespace Scorpio.Uow
         public TestTable Add(TestTable testTable);
 
         public Task<TestTable> AddAsync(TestTable testTable);
-    }
-
-    public class TestTableService : ITestTableService, ITransientDependency
-    {
-        private readonly IRepository<TestTable, int> _repository;
-
-        public TestTableService(IRepository<TestTable, int> repository) => _repository = repository;
-
-        public TestTable Add(TestTable testTable)
-        {
-            _repository.As<IEfCoreRepository<TestTable>>().DbContext.Database.EnsureCreated();
-            return _repository.Insert(testTable, false);
-        }
-
-        public Task<TestTable> AddAsync(TestTable testTable)
-        {
-            _repository.As<IEfCoreRepository<TestTable>>().DbContext.Database.EnsureCreated();
-            return _repository.InsertAsync(testTable, false);
-        }
-
-        public TestTable Get(int id)
-        {
-            _repository.As<IEfCoreRepository<TestTable>>().DbContext.Database.EnsureCreated();
-            return _repository.Get(id);
-        }
     }
 }

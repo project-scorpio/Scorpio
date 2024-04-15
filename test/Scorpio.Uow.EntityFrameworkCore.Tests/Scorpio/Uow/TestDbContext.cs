@@ -1,9 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using Microsoft.EntityFrameworkCore;
 
-using Microsoft.EntityFrameworkCore;
-
-using Scorpio.Data;
-using Scorpio.Entities;
 using Scorpio.EntityFrameworkCore;
 
 namespace Scorpio.Uow
@@ -31,30 +27,6 @@ namespace Scorpio.Uow
                     new TestTable { Id = 6, StringValue = "Row6" }
                     );
         }
-
-    }
-
-    public class TestTable : Entity<int>, ISoftDelete, IHasExtraProperties
-    {
-
-        public TestTable() => Details = new HashSet<TestTableDetail>();
-        public string StringValue { get; set; }
-        public bool IsDeleted { get; set; }
-
-        public ExtraPropertyDictionary ExtraProperties { get; set; }
-
-        public virtual ICollection<TestTableDetail> Details { get; set; }
-    }
-
-    public class TestTableDetail : Entity<int>
-    {
-        public string DetailValue { get; set; }
-        public virtual TestTable TestTable { get; set; }
-    }
-
-    public class SimpleTable : Entity<int>
-    {
-        public string StringValue { get; set; }
 
     }
 }

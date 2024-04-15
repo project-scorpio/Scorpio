@@ -1,0 +1,19 @@
+using System.Collections.Generic;
+
+using Scorpio.Data;
+using Scorpio.Entities;
+
+namespace Scorpio.Uow
+{
+    public class TestTable : Entity<int>, ISoftDelete, IHasExtraProperties
+    {
+
+        public TestTable() => Details = new HashSet<TestTableDetail>();
+        public string StringValue { get; set; }
+        public bool IsDeleted { get; set; }
+
+        public ExtraPropertyDictionary ExtraProperties { get; set; }
+
+        public virtual ICollection<TestTableDetail> Details { get; set; }
+    }
+}

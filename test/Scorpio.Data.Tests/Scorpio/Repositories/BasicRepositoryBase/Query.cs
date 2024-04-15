@@ -7,7 +7,7 @@ using Xunit;
 
 namespace Scorpio.Repositories
 {
-    public partial class BasicRepositoryBase_Tests
+    public partial class BasicRepositoryBaseTests
     {
         [Fact]
         public void GetList()

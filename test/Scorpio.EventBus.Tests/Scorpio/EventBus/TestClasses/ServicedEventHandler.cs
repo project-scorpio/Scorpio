@@ -6,9 +6,4 @@ namespace Scorpio.EventBus.TestClasses
     {
         public Task HandleEventAsync(object sender, TestEventData eventData) => Task.CompletedTask;
     }
-
-    public class TestEventData
-    {
-        public string Id { get; set; }
-    }
 }

@@ -3,9 +3,4 @@
     public  interface IGenericService<T>
     {
     }
-
-    public class GenericService<T> : IGenericService<T>
-    {
-
-    }
 }

@@ -1,0 +1,75 @@
+﻿using System;
+
+using Microsoft.Extensions.DependencyInjection;
+
+using Newtonsoft.Json;
+
+using Shouldly;
+
+using Xunit;
+
+namespace Scorpio.Auditing
+{
+    public class AuditingHelperTests : Scorpio.TestBase.IntegratedTest<AuditingTestModule>
+    {
+        protected override void SetBootstrapperCreationOptions(BootstrapperCreationOptions options) => options.UseAspectCore();
+        private readonly IAuditingHelper _auditingHelper;
+
+        public AuditingHelperTests() => _auditingHelper = ServiceProvider.GetService<IAuditingHelper>();
+
+        [Theory]
+        [InlineData(typeof(NonAuditingClassWithAuditedAttribute), false)]
+        [InlineData(typeof(AuditingClassWithAuditedAttribute), true)]
+        [InlineData(typeof(AuditingMethodWithAuditedAttribute), true)]
+        [InlineData(typeof(DisableAuditingClassWithAuditedAttribute), false)]
+        [InlineData(typeof(DisableAuditingMethodWithAuditedAttribute), false)]
+        [InlineData(typeof(AuditingClassDisableAuditingMethodWithAuditedAttribute), false)]
+        [InlineData(typeof(DisableAuditingClassAuditingMethodWithAuditedAttribute), true)]
+        public void ShouldSaveAuditForAttribute(Type type, bool result)
+        {
+            var method = type.GetMethod("Method");
+            _auditingHelper.ShouldSaveAudit(method).ShouldBe(result);
+        }
+
+        [Fact]
+        public void CreateAuditInfo()
+        {
+            var actual = _auditingHelper.CreateAuditInfo();
+            actual.ShouldBeOfType<AuditInfo>().ShouldNotBeNull();
+            actual.CurrentUser.ShouldBe("TestUser");
+        }
+
+        [Fact]
+        public void CreateAuditAction()
+        {
+            var type = typeof(NonAuditingClassWithAuditedAttribute);
+            var method = type.GetMethod("Action");
+            var actual = _auditingHelper.CreateAuditAction(type, method, new object[] { "Test", new TestClass { Name = "Test", Age = 18, Descript = "Descript", IgnoreClass = new IgnoreClass(), Data = new object() } });
+            actual.ServiceName.ShouldBe(type.FullName);
+            actual.MethodName.ShouldBe(method.Name);
+            actual.Parameters.ShouldBe("{\"name\":\"Test\",\"age\":{\"name\":\"Test\",\"age\":18}}");
+
+        }
+
+        private class TestClass
+        {
+            public string Name { get; set; }
+
+            public int Age { get; set; }
+
+            [DisableAuditing]
+            public string Descript { get; set; }
+
+            [JsonIgnore]
+            public object Data { get; set; }
+
+            public IgnoreClass IgnoreClass { get; set; }
+        }
+
+        internal class IgnoreClass
+        {
+
+        }
+
+    }
+}

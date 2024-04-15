@@ -8,7 +8,7 @@ using Xunit;
 
 namespace Scorpio.Repositories
 {
-    public partial class RepositoryBase_Tests
+    public partial class RepositoryBaseTests
     {
         [Fact]
         public void WithDetails()

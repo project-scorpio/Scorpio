@@ -73,26 +73,4 @@ namespace System.Linq.Async
 
         protected abstract ValueTask<bool> MoveNextCore();
     }
-
-    internal abstract class AsyncIterator<TSource> : AsyncIteratorBase<TSource>
-    {
-        protected TSource _current = default!;
-
-        public override TSource Current => _current;
-
-        public override ValueTask DisposeAsync()
-        {
-            _current = default!;
-
-            return base.DisposeAsync();
-        }
-    }
-
-    internal enum AsyncIteratorState
-    {
-        New = 0,
-        Allocated = 1,
-        Iterating = 2,
-        Disposed = -1,
-    }
 }

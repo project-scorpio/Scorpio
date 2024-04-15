@@ -1,7 +1,4 @@
-﻿using System;
-using System.Security.Principal;
-
-using Microsoft.Extensions.DependencyInjection;
+﻿using Microsoft.Extensions.DependencyInjection;
 
 using Scorpio.Modularity;
 using Scorpio.Security;
@@ -19,38 +16,10 @@ namespace Scorpio.Auditing
             context.Services.Configure<AuditingOptions>(opt =>
             {
                 opt.Contributors.Add(new TestContributor());
-                opt.IgnoredTypes.Add<AuditingHelper_Tests.IgnoreClass>();
+                opt.IgnoredTypes.Add<AuditingHelperTests.IgnoreClass>();
             });
             context.Services.ReplaceSingleton<IAuditingStore, FackAuditingStore>();
         }
 
-    }
-
-    internal class TestPrincipalAccessor : ICurrentPrincipalAccessor
-    {
-        public IPrincipal Principal { get; }
-
-        public TestPrincipalAccessor() => Principal = new GenericPrincipal(new GenericIdentity("TestUser"), new[] { "Admin" });
-    }
-
-    internal class TestContributor : IAuditContributor
-    {
-        public void PostContribute(AuditContributionContext context) => context.AuditInfo.Comments.Add("PostContribute");
-
-        public void PreContribute(AuditContributionContext context) => context.AuditInfo.Comments.Add("PreContribute");
-    }
-
-    internal class TestClock : IClock
-    {
-        public DateTime Now { get; }
-        public DateTimeKind Kind { get; }
-        public bool SupportsMultipleTimezone { get; }
-
-        public TestClock()
-        {
-            Now = new DateTime(2019, 1, 1, 0, 0, 0);
-            SupportsMultipleTimezone = true;
-        }
-        public DateTime Normalize(DateTime dateTime) => dateTime;
     }
 }

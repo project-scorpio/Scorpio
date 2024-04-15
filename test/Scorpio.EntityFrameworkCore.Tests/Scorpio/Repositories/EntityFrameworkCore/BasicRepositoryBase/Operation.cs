@@ -7,7 +7,7 @@ using Xunit;
 
 namespace Scorpio.Repositories.EntityFrameworkCore
 {
-    public partial class BasicRepositoryBase_Tests
+    public partial class BasicRepositoryBaseTests
     {
         [Fact]
         public void Insert()

@@ -5,14 +5,4 @@
         public SpecificObjectMapperDest Map(SpecificObjectMapperSource source) => new SpecificObjectMapperDest();
         public SpecificObjectMapperDest Map(SpecificObjectMapperSource source, SpecificObjectMapperDest destination) =>destination;
     }
-
-    public class SpecificObjectMapperSource
-    {
-
-    }
-
-    public class SpecificObjectMapperDest
-    {
-
-    }
 }

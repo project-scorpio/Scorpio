@@ -30,12 +30,4 @@ namespace Scorpio.Modularity.Plugins
                 .ToArray();
         }
     }
-
-    /// <summary>
-    /// 
-    /// </summary>
-    public interface IPlugInSourceList
-    {
-
-    }
 }
