@@ -66,7 +66,7 @@ namespace System.Linq.Async
             {
                 await DisposeAsync().ConfigureAwait(false);
                 throw;
-            }
+            } // dotCover disable this line
         }
 
         public abstract AsyncIteratorBase<TSource> Clone();

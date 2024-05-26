@@ -99,6 +99,8 @@ namespace System
         {
             var str = "Scorpio project is great.";
             str.NthIndexOf('s', 1, StringComparison.Ordinal).ShouldBe(17);
+            str.NthIndexOf('s', 2, StringComparison.Ordinal).ShouldBe(-1);
+            str.NthIndexOf('s', 2, StringComparison.OrdinalIgnoreCase).ShouldBe(17);
             str.NthIndexOf('s', 1, StringComparison.OrdinalIgnoreCase).ShouldBe(0);
             str.NthIndexOf('S', 1, StringComparison.Ordinal).ShouldBe(0);
             str.NthIndexOf('S', 1, StringComparison.OrdinalIgnoreCase).ShouldBe(0);

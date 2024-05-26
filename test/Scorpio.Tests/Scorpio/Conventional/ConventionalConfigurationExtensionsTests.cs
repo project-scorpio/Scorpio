@@ -15,7 +15,7 @@ namespace Scorpio.Conventional
         [Fact]
         public void Where()
         {
-            Predicate<Type> func = (Type t) => t.Name == "ConventionalConfigurationExtensions_Tests";
+            Predicate<Type> func = (Type t) => t.Name == "ConventionalConfigurationExtensionsTests";
             var config=new ConventionalConfiguration<ConventionalDependencyAction>(null,null);
             config.Where(func);
             config.GetContexts().ShouldHaveSingleItem().TypePredicate.Compile().Invoke(typeof(ConventionalConfigurationExtensionsTests)).ShouldBeTrue();

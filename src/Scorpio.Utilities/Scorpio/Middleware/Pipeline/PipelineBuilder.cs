@@ -27,13 +27,9 @@ namespace Scorpio.Middleware.Pipeline
         {
             Check.NotNull(builder, nameof(builder));
             Check.NotNull(middleware, nameof(middleware));
-            return builder.Use(next =>
+            return builder.Use(next => context =>
             {
-                return context =>
-                {
-                    Func<Task> simpleNext = () => next(context);
-                    return middleware(context, simpleNext);
-                };
+                return middleware(context, ()=>next(context)); 
             });
         }
 
@@ -68,6 +64,7 @@ namespace Scorpio.Middleware.Pipeline
         /// <param name="builder"></param>
         /// <param name="middlewareType"></param>
         /// <param name="args"></param>
+        /// <exception cref="InvalidOperationException"></exception>
         public static IPipelineBuilder<TPipelineContext> UseMiddleware<TPipelineContext>(this IPipelineBuilder<TPipelineContext> builder, Type middlewareType, params object[] args)
         {
             Check.NotNull(builder, nameof(builder));
@@ -75,56 +72,36 @@ namespace Scorpio.Middleware.Pipeline
             builder.Use(next =>
            {
                var methods = middlewareType.GetMethods(BindingFlags.Instance | BindingFlags.Public).Where(m => m.Name.IsIn("Invoke", "InvokeAsync")).ToArray();
-               if (methods.Length > 1)
+               if (methods.Length != 1)
                {
                    throw new InvalidOperationException();
                }
-
-               if (methods.Length == 0)
-               {
+               var methodInfo = methods[0];
+               if (!typeof(Task).IsAssignableFrom(methodInfo.ReturnType))
                    throw new InvalidOperationException();
-               }
-               var methodinfo = methods[0];
-               if (!typeof(Task).IsAssignableFrom(methodinfo.ReturnType))
-               {
-                   throw new InvalidOperationException();
-               }
-               var parameters = methodinfo.GetParameters();
+               var parameters = methodInfo.GetParameters();
                if (parameters.Length == 0 || parameters[0].ParameterType != typeof(TPipelineContext))
-               {
                    throw new InvalidOperationException();
-               }
                if (builder.ApplicationServices == null)
-               {
                    throw new InvalidOperationException();
-               }
-
                var ctorArgs = new object[args.Length + 1];
                ctorArgs[0] = next;
                Array.Copy(args, 0, ctorArgs, 1, args.Length);
                var instance = ActivatorUtilities.CreateInstance(builder.ApplicationServices, middlewareType, ctorArgs);
                if (parameters.Length == 1)
-               {
-                   return (PipelineRequestDelegate<TPipelineContext>)methodinfo.CreateDelegate(typeof(PipelineRequestDelegate<TPipelineContext>), instance);
-               }
-
-               var factory = Compile<object, TPipelineContext>(methodinfo, parameters);
+                   return (PipelineRequestDelegate<TPipelineContext>)methodInfo.CreateDelegate(typeof(PipelineRequestDelegate<TPipelineContext>), instance);
+               var factory = Compile<object, TPipelineContext>(methodInfo, parameters);
 
                return context =>
                {
-                   var serviceProvider = builder.ApplicationServices;
-                   if (serviceProvider == null)
-                   {
-                       throw new InvalidOperationException();
-                   }
-
+                   var serviceProvider = builder.ApplicationServices??throw new InvalidOperationException();
                    return factory(instance, context, serviceProvider);
                };
            });
             return builder;
         }
 
-        private static Func<T, TPipelineContext, IServiceProvider, Task> Compile<T, TPipelineContext>(MethodInfo methodinfo, ParameterInfo[] parameters)
+        private static Func<T, TPipelineContext, IServiceProvider, Task> Compile<T, TPipelineContext>(MethodInfo methodInfo, ParameterInfo[] parameters)
         {
             var middleware = typeof(T);
             var httpContextArg = Expression.Parameter(typeof(TPipelineContext), "context");
@@ -152,12 +129,12 @@ namespace Scorpio.Middleware.Pipeline
             }
 
             Expression middlewareInstanceArg = instanceArg;
-            if (methodinfo.DeclaringType != typeof(T))
+            if (methodInfo.DeclaringType != typeof(T))
             {
-                middlewareInstanceArg = Expression.Convert(middlewareInstanceArg, methodinfo.DeclaringType);
+                middlewareInstanceArg = Expression.Convert(middlewareInstanceArg, methodInfo.DeclaringType);
             }
 
-            var body = Expression.Call(middlewareInstanceArg, methodinfo, methodArguments);
+            var body = Expression.Call(middlewareInstanceArg, methodInfo, methodArguments);
 
             var lambda = Expression.Lambda<Func<T, TPipelineContext, IServiceProvider, Task>>(body, instanceArg, httpContextArg, providerArg);
 

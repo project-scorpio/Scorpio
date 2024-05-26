@@ -34,6 +34,7 @@ namespace Scorpio.Middleware.Pipeline
             builder.ApplicationServices.ShouldBe(serviceProvider);
             Should.Throw<ArgumentNullException>(() => builder.Use((Func<TestPipelineContext, Func<Task>, Task>)null));
             Should.NotThrow(() => builder.Use((TestPipelineContext context, Func<Task> next) => { context.PipelineInvoked = true; return next(); }));
+            Should.NotThrow(() => builder.Use((TestPipelineContext context, Func<Task> next) => { context.PipelineInvoked = true; return next(); }));
             var context = new TestPipelineContext();
             context.PipelineInvoked.ShouldBeFalse();
             Should.NotThrow(() => builder.Build()(context));
