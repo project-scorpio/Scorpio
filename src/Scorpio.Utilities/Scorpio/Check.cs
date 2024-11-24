@@ -3,7 +3,6 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Reflection;
-using System.Runtime.CompilerServices;
 
 namespace Scorpio
 {
@@ -20,15 +19,7 @@ namespace Scorpio
         /// <param name="argument"></param>
         /// <param name="parameterName"></param>
         /// <returns></returns>
-        public static T NotNull<T>(T argument, string parameterName = null)
-        {
-            if (argument == null)
-            {
-                throw new ArgumentNullException(parameterName);
-            }
-
-            return argument;
-        }
+        public static T NotNull<T>(T argument, string parameterName = null) => argument == null ? throw new ArgumentNullException(parameterName) : argument;
 
         /// <summary>
         /// 
@@ -38,15 +29,7 @@ namespace Scorpio
         /// <param name="parameterName"></param>
         /// <param name="message"></param>
         /// <returns></returns>
-        public static T NotNull<T>(T value, string parameterName, string message)
-        {
-            if (value == null)
-            {
-                throw new ArgumentNullException(parameterName, message);
-            }
-
-            return value;
-        }
+        public static T NotNull<T>(T value, string parameterName, string message) => value == null ? throw new ArgumentNullException(parameterName, message) : value;
 
         /// <summary>
         /// 
@@ -56,12 +39,9 @@ namespace Scorpio
         /// <returns></returns>
         public static string NotNullOrWhiteSpace(string value, string parameterName)
         {
-            if (value.IsNullOrWhiteSpace())
-            {
-                throw new ArgumentException($"{parameterName} can not be null, empty or white space!", parameterName);
-            }
-
-            return value;
+            return value.IsNullOrWhiteSpace()
+                ? throw new ArgumentException($"{parameterName} can not be null, empty or white space!", parameterName)
+                : value;
         }
 
         /// <summary>
@@ -70,15 +50,7 @@ namespace Scorpio
         /// <param name="value"></param>
         /// <param name="parameterName"></param>
         /// <returns></returns>
-        public static string NotNullOrEmpty(string value, string parameterName)
-        {
-            if (value.IsNullOrEmpty())
-            {
-                throw new ArgumentException($"{parameterName} can not be null or empty!", parameterName);
-            }
-
-            return value;
-        }
+        public static string NotNullOrEmpty(string value, string parameterName) => value.IsNullOrEmpty() ? throw new ArgumentException($"{parameterName} can not be null or empty!", parameterName) : value;
 
         /// <summary>
         /// 
@@ -87,15 +59,7 @@ namespace Scorpio
         /// <param name="value"></param>
         /// <param name="parameterName"></param>
         /// <returns></returns>
-        public static ICollection<T> NotNullOrEmpty<T>(ICollection<T> value, string parameterName)
-        {
-            if (value.IsNullOrEmpty())
-            {
-                throw new ArgumentException(parameterName + " can not be null or empty!", parameterName);
-            }
-
-            return value;
-        }
+        public static ICollection<T> NotNullOrEmpty<T>(ICollection<T> value, string parameterName) => value.IsNullOrEmpty() ? throw new ArgumentException(parameterName + " can not be null or empty!", parameterName) : value;
 
         /// <summary>
         /// 
@@ -109,12 +73,9 @@ namespace Scorpio
         {
             NotNull(type, parameterName);
 
-            if (!type.IsAssignableTo<TBaseType>())
-            {
-                throw new ArgumentException($"{parameterName} (type of {type.AssemblyQualifiedName}) should be assignable to the {typeof(TBaseType).GetFullNameWithAssemblyName()}!",parameterName);
-            }
-
-            return type;
+            return !type.IsAssignableTo<TBaseType>()
+                ? throw new ArgumentException($"{parameterName} (type of {type.AssemblyQualifiedName}) should be assignable to the {typeof(TBaseType).GetFullNameWithAssemblyName()}!", parameterName)
+                : type;
         }
     }
 }
