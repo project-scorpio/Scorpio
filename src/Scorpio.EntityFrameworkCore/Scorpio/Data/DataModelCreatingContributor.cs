@@ -2,10 +2,10 @@
 using System.Reflection;
 
 using Microsoft.EntityFrameworkCore;
-#if !NET8_0_OR_GREATER
-using Newtonsoft.Json;
-#else
+#if NET8_0_OR_GREATER
 using System.Text.Json;
+#else
+using Newtonsoft.Json;
 #endif
 using Scorpio.EntityFrameworkCore;
 

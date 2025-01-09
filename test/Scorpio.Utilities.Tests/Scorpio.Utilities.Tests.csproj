@@ -8,7 +8,7 @@
 
   <ItemGroup>
     <PackageReference Include="Microsoft.Extensions.Logging.Console"/>
-    <PackageReference Include="Divergic.Logging.Xunit"/>
+    <PackageReference Include="Neovolve.Logging.Xunit"/>
 
   </ItemGroup>
 

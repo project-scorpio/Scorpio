@@ -22,4 +22,14 @@
     <PackageReference Include="Z.EntityFramework.Plus.EFCore" />
     <PackageReference Include="Microsoft.EntityFrameworkCore.Proxies"/>
   </ItemGroup>
+  <ItemGroup Condition="'$(TargetFramework)' == 'netstandard2.0'">
+    <PackageReference Include="Newtonsoft.Json" />
+  </ItemGroup>
+  <ItemGroup Condition="'$(TargetFramework)' == 'net6.0'">
+    <PackageReference Include="Newtonsoft.Json" />
+  </ItemGroup>
+  <ItemGroup Condition="'$(TargetFramework)' == 'net7.0'">
+    <PackageReference Include="Newtonsoft.Json" />
+  </ItemGroup>
+
 </Project>
